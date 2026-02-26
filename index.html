@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,9 +22,15 @@ html, body{ height:100%; }
 
 body{
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+font-size: 14px;
   background:var(--bg);
   color:var(--ink);
+
+  font-family: Arial, Helvetica, sans-serif;
+font-size: 14px;
+
+  
 }
 
 /* iframe-safe width + tight padding */
@@ -36,7 +43,7 @@ body{
 h1{
   text-align:center;
   font-size: clamp(18px, 2.1vw, 26px);
-  margin: 0 0 12px;
+  margin: 80px 12 12px;
 }
 
 /* RISE-SAFE: lock layout; allow horizontal scroll instead of reflow/reorder */
@@ -98,16 +105,49 @@ h1{
 }
 
 /* Square image container – no border */
+/* Square image container – now visually clickable */
 .circle{
   width: var(--circle);
   height: var(--circle);
-  margin: 0 auto 0px;  /* minimal space to label */
+  margin: 0 auto 0px;
   display:grid;
   place-items:center;
-  background:transparent;
-  border:none;
-  border-radius:10px;
+
+  background:#ffffff;
+  border-radius:14px;
+
   cursor:pointer;
+
+  /* subtle elevation */
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.08),
+    0 1px 3px rgba(0,0,0,0.06);
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    background .15s ease;
+}
+
+/* Hover lift */
+.circle:hover{
+  transform: translateY(-3px);
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.14),
+    0 4px 8px rgba(0,0,0,0.10);
+}
+
+/* Active / pressed state */
+.circle:active{
+  transform: translateY(0);
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.10);
+}
+
+/* Keyboard focus */
+.circle:focus-visible{
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* Icon */
@@ -134,22 +174,29 @@ h1{
   margin: 6px 0 0; /* increased so badge never feels too close */
 }
 
-/* Floating panel (tight + iframe safe) */
+/* Floating panel (narrower + more vertical + edge-safe) */
 .panel{
   position:absolute;
+
+  /* default: centered */
   left:50%;
-  top: calc(var(--circle) + 16px); /* a touch lower for clarity */
+  right:auto;
+  top: calc(var(--circle) + 16px);
   transform: translateX(-50%);
-  width: min(360px, calc(100vw - 20px));
+
+  /* narrower so it doesn’t hit edges */
+  width: min(270px, calc(100vw - 28px));
+
   background:#fff;
   border:1px solid #d9deea;
   border-radius:12px;
   box-shadow: 0 10px 26px rgba(20,22,26,.14);
-  padding: 8px 10px;
-  text-align:center;
+  padding: 10px 12px;
+
+  text-align:left; /* reads better when vertical */
   color:var(--muted);
   font-size:13px;
-  line-height:1.4;
+  line-height:1.45;
   z-index: 3;
 
   opacity:0;
@@ -170,8 +217,10 @@ h1{
   color:#3e4a5a;
   margin:0 0 4px;
   letter-spacing:.12px;
+  text-align:left;
 }
-.panel p{ margin:0 0 8px; }
+
+.panel p{ margin:0 0 10px; }
 .panel p:last-child{ margin:0; }
 
 .model{
@@ -180,6 +229,20 @@ h1{
   background:#f3f7ff;
   border-radius:10px;
   color:#1a2a4a;
+  text-align:left;
+}
+
+/* Edge alignment helpers (added by JS) */
+.node.edge-left .panel{
+  left:0;
+  right:auto;
+  transform:none;
+}
+
+.node.edge-right .panel{
+  left:auto;
+  right:0;
+  transform:none;
 }
 
 /* REMOVE ALL CONNECTOR ARROWS (bulletproof) */
@@ -204,7 +267,7 @@ h1{
 <div class="wrap">
   <h1>Corn flour production from farm to shop</h1>
 
-  <!-- NEW: scroller wrapper keeps layout fixed in Rise -->
+  <!-- scroller wrapper keeps layout fixed in Rise -->
   <div class="scroller">
     <div class="flow" id="flow">
 
@@ -213,100 +276,90 @@ h1{
         <div class="badge">1</div>
         <div class="circle" role="button" tabindex="0" aria-expanded="false">
           <div class="icon">
-            <img src="harvest.png" alt="Harvest on farm">
+            <img src="harvest.png" alt="1. Harvest on farm">
           </div>
         </div>
-        <div class="label">Harvest on farm</div>
+        <div class="label">1. Harvest on farm</div>
         <div class="panel" role="region" aria-label="Stage 1 details">
           <p class="k">Vocabulary</p>
           <p>harvest, crop, yield, collect, load</p>
-          <p class="k">Model sentence</p>
-          <p class="model">Initially, mature corn is harvested on farms before being transported to a processing facility.</p>
         </div>
       </div>
 
       <!-- 2 -->
       <div class="node" id="n2">
-        <div class="badge">2</div>
+        
         <div class="circle" role="button" tabindex="0" aria-expanded="false">
           <div class="icon">
             <img src="washing.png" alt="Washing corn">
           </div>
         </div>
-        <div class="label">Washing</div>
+        <div class="label"> 2. Washing</div>
         <div class="panel" role="region" aria-label="Stage 2 details">
           <p class="k">Vocabulary</p>
           <p>rinse, cleanse, debris, impurities, husk removal</p>
-          <p class="k">Model sentence</p>
-          <p class="model">Upon arrival at the factory, the corn is washed to remove husk and other impurities.</p>
         </div>
       </div>
 
       <!-- 3 -->
       <div class="node" id="n3">
-        <div class="badge">3</div>
+        <div class="badge"></div>
         <div class="circle" role="button" tabindex="0" aria-expanded="false">
           <div class="icon">
             <img src="grinding.png" alt="Grinding corn">
           </div>
         </div>
-        <div class="label">Grinding</div>
+        <div class="label">3. Grinding</div>
         <div class="panel" role="region" aria-label="Stage 3 details">
           <p class="k">Vocabulary</p>
           <p>crush, grind, break down, fragments, particles</p>
-          <p class="k">Model sentence</p>
-          <p class="model">The cleaned corn is then ground into smaller fragments for further processing.</p>
         </div>
       </div>
 
       <!-- 4 -->
       <div class="node" id="n4">
-        <div class="badge">4</div>
+        <div class="badge"></div>
         <div class="circle" role="button" tabindex="0" aria-expanded="false">
           <div class="icon">
             <img src="milling.png" alt="Milling corn">
           </div>
         </div>
-        <div class="label">Milling</div>
+        <div class="label">4. Milling</div>
         <div class="panel" role="region" aria-label="Stage 4 details">
           <p class="k">Vocabulary</p>
           <p>refine, mill, pulverise, fine powder, consistent texture</p>
-          <p class="k">Model sentence</p>
-          <p class="model">Following this, the material is milled to produce a fine and consistent powder.</p>
+
         </div>
       </div>
 
       <!-- 5 -->
       <div class="node" id="n5">
-        <div class="badge">5</div>
+        <div class="badge"></div>
         <div class="circle" role="button" tabindex="0" aria-expanded="false">
           <div class="icon">
             <img src="sifting.png" alt="Sifting flour">
           </div>
         </div>
-        <div class="label">Sifting</div>
+        <div class="label">5.Sifting</div>
         <div class="panel" role="region" aria-label="Stage 5 details">
           <p class="k">Vocabulary</p>
           <p>sift, screen, filter, coarse particles, residue</p>
-          <p class="k">Model sentence</p>
-          <p class="model">The flour is subsequently sifted to eliminate larger particles and ensure smoothness.</p>
+         
         </div>
       </div>
 
       <!-- 6 -->
       <div class="node" id="n6">
-        <div class="badge">6</div>
+        <div class="badge"></div>
         <div class="circle" role="button" tabindex="0" aria-expanded="false">
           <div class="icon">
             <img src="packaging.png" alt="Packaging flour">
           </div>
         </div>
-        <div class="label">Packaging</div>
+        <div class="label">6.Packaging</div>
         <div class="panel" role="region" aria-label="Stage 6 details">
           <p class="k">Vocabulary</p>
           <p>package, seal, label, container, batch</p>
-          <p class="k">Model sentence</p>
-          <p class="model">Once refined, the flour is packaged into sealed containers ready for distribution.</p>
         </div>
       </div>
 
@@ -318,12 +371,10 @@ h1{
             <img src="distribution.png" alt="Distribution of flour">
           </div>
         </div>
-        <div class="label">Distribution</div>
+        <div class="label">7.Distribution</div>
         <div class="panel" role="region" aria-label="Stage 7 details">
           <p class="k">Vocabulary</p>
           <p>distribute, deliver, retail outlets, supply chain, logistics</p>
-          <p class="k">Model sentence</p>
-          <p class="model">Finally, the finished product is distributed to shops and restaurants for consumer use.</p>
         </div>
       </div>
 
@@ -334,6 +385,7 @@ h1{
 <script>
 (() => {
   const nodes = Array.from(document.querySelectorAll(".node"));
+  const scroller = document.querySelector(".scroller");
 
   function closeAll(except){
     nodes.forEach(n => {
@@ -343,13 +395,45 @@ h1{
     });
   }
 
+  function setEdgeClass(node){
+    node.classList.remove("edge-left","edge-right");
+
+    const panel = node.querySelector(".panel");
+    if (!scroller || !panel) return;
+
+    // Temporarily show for measurement (without flashing)
+    const wasOpen = node.classList.contains("open");
+    if (!wasOpen) {
+      panel.style.visibility = "hidden";
+      panel.style.opacity = "1";
+      node.classList.add("open");
+    }
+
+    const sRect = scroller.getBoundingClientRect();
+    const pRect = panel.getBoundingClientRect();
+    const pad = 8;
+
+    if (pRect.left < sRect.left + pad) node.classList.add("edge-left");
+    if (pRect.right > sRect.right - pad) node.classList.add("edge-right");
+
+    // Cleanup
+    if (!wasOpen) {
+      node.classList.remove("open");
+      panel.style.opacity = "";
+      panel.style.visibility = "";
+    }
+  }
+
   nodes.forEach(node => {
     const btn = node.querySelector(".circle");
     const toggle = () => {
       const willOpen = !node.classList.contains("open");
       closeAll(willOpen ? node : null);
+
       node.classList.toggle("open", willOpen);
       btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+
+      if (willOpen) setEdgeClass(node);
     };
 
     btn.addEventListener("click", toggle);
@@ -364,8 +448,21 @@ h1{
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".node")) closeAll(null);
   });
+
+  window.addEventListener("resize", () => {
+    const openNode = document.querySelector(".node.open");
+    if (openNode) setEdgeClass(openNode);
+  });
+
+  scroller?.addEventListener("scroll", () => {
+    const openNode = document.querySelector(".node.open");
+    if (openNode) setEdgeClass(openNode);
+  }, { passive:true });
+
 })();
 </script>
 
 </body>
 </html>
+```
+
