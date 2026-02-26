@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Corn flour production from farm to shop</title>
+
+<style>
+:root{
+  --bg:#f9f8f4;
+  --ink:#14161a;
+  --muted:#5b6675;
+  --accent:#1f6feb;
+
+  /* Compact sizing so 3 desktop rows fit on a typical laptop + Rise iframe */
+  --circle: clamp(92px, 11.5vw, 150px);
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+
+/* iframe-safe width + tight padding */
+.wrap{
+  width:min(1200px, 100%);
+  margin:0 auto;
+  padding: 10px 14px 18px;
+}
+
+h1{
+  text-align:center;
+  font-size: clamp(18px, 2.1vw, 26px);
+  margin: 0 0 12px;
+}
+
+/* RISE-SAFE: lock layout; allow horizontal scroll instead of reflow/reorder */
+.scroller{
+  overflow-x:auto;
+  overflow-y:visible;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px; /* room for scrollbar if shown */
+}
+
+.flow{
+  position:relative;
+  display:grid;
+
+  /* LOCKED layout (always the same visual positions) */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-areas:
+    "n1 .  .  .  .  ."
+    "n2 n3 n4 n5 .  ."
+    ".  .  .  n6 n7 .";
+
+  row-gap: 28px;       /* even row spacing */
+  column-gap: 30px;
+
+  justify-items:center;
+  align-items:start;
+  overflow: visible;
+
+  /* Prevents Rise iframe width changes from triggering reorder */
+  min-width: 980px;
+}
+
+#n1{ grid-area:n1; }
+#n2{ grid-area:n2; }
+#n3{ grid-area:n3; }
+#n4{ grid-area:n4; }
+#n5{ grid-area:n5; }
+#n6{ grid-area:n6; }
+#n7{ grid-area:n7; }
+
+/* NODE */
+.node{
+  position:relative;
+  text-align:center;
+  width:100%;
+  max-width: calc(var(--circle) + 22px);
+  padding-top: 6px; /* helps keep label spacing consistent with badge */
+}
+
+/* Numbers */
+.badge{
+  position:absolute;
+  top:-18px;
+  left:50%;
+  transform:translateX(-50%);
+  font-weight:800;
+  font-size:16px;
+  color:#000;
+}
+
+/* Square image container – no border */
+.circle{
+  width: var(--circle);
+  height: var(--circle);
+  margin: 0 auto 0px;  /* minimal space to label */
+  display:grid;
+  place-items:center;
+  background:transparent;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* Icon */
+.icon{
+  width: 86%;
+  height: 86%;
+  display:grid;
+  place-items:center;
+}
+
+.icon img,
+.icon svg{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+/* Label: consistent spacing */
+.label{
+  font-weight:650;
+  font-size:13px;
+  line-height:1.15;
+  margin: 6px 0 0; /* increased so badge never feels too close */
+}
+
+/* Floating panel (tight + iframe safe) */
+.panel{
+  position:absolute;
+  left:50%;
+  top: calc(var(--circle) + 16px); /* a touch lower for clarity */
+  transform: translateX(-50%);
+  width: min(360px, calc(100vw - 20px));
+  background:#fff;
+  border:1px solid #d9deea;
+  border-radius:12px;
+  box-shadow: 0 10px 26px rgba(20,22,26,.14);
+  padding: 8px 10px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.4;
+  z-index: 3;
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition: opacity .16s ease, visibility .16s ease;
+}
+
+.node.open .panel{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.panel .k{
+  font-size:11px;
+  font-weight:800;
+  color:#3e4a5a;
+  margin:0 0 4px;
+  letter-spacing:.12px;
+}
+.panel p{ margin:0 0 8px; }
+.panel p:last-child{ margin:0; }
+
+.model{
+  border-left:4px solid var(--accent);
+  padding: 8px 8px 8px 10px;
+  background:#f3f7ff;
+  border-radius:10px;
+  color:#1a2a4a;
+}
+
+/* REMOVE ALL CONNECTOR ARROWS (bulletproof) */
+.node::before,
+.node::after,
+.node:not(:last-child)::before,
+.node:not(:last-child)::after,
+#n1::before,#n1::after,
+#n2::before,#n2::after,
+#n3::before,#n3::after,
+#n4::before,#n4::after,
+#n5::before,#n5::after,
+#n6::before,#n6::after,
+#n7::before,#n7::after{
+  content:none !important;
+  display:none !important;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <h1>Corn flour production from farm to shop</h1>
+
+  <!-- NEW: scroller wrapper keeps layout fixed in Rise -->
+  <div class="scroller">
+    <div class="flow" id="flow">
+
+      <!-- 1 -->
+      <div class="node" id="n1">
+        <div class="badge">1</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="harvest.png" alt="Harvest on farm">
+          </div>
+        </div>
+        <div class="label">Harvest on farm</div>
+        <div class="panel" role="region" aria-label="Stage 1 details">
+          <p class="k">Vocabulary</p>
+          <p>harvest, crop, yield, collect, load</p>
+          <p class="k">Model sentence</p>
+          <p class="model">Initially, mature corn is harvested on farms before being transported to a processing facility.</p>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="node" id="n2">
+        <div class="badge">2</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="washing.png" alt="Washing corn">
+          </div>
+        </div>
+        <div class="label">Washing</div>
+        <div class="panel" role="region" aria-label="Stage 2 details">
+          <p class="k">Vocabulary</p>
+          <p>rinse, cleanse, debris, impurities, husk removal</p>
+          <p class="k">Model sentence</p>
+          <p class="model">Upon arrival at the factory, the corn is washed to remove husk and other impurities.</p>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="node" id="n3">
+        <div class="badge">3</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="grinding.png" alt="Grinding corn">
+          </div>
+        </div>
+        <div class="label">Grinding</div>
+        <div class="panel" role="region" aria-label="Stage 3 details">
+          <p class="k">Vocabulary</p>
+          <p>crush, grind, break down, fragments, particles</p>
+          <p class="k">Model sentence</p>
+          <p class="model">The cleaned corn is then ground into smaller fragments for further processing.</p>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="node" id="n4">
+        <div class="badge">4</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="milling.png" alt="Milling corn">
+          </div>
+        </div>
+        <div class="label">Milling</div>
+        <div class="panel" role="region" aria-label="Stage 4 details">
+          <p class="k">Vocabulary</p>
+          <p>refine, mill, pulverise, fine powder, consistent texture</p>
+          <p class="k">Model sentence</p>
+          <p class="model">Following this, the material is milled to produce a fine and consistent powder.</p>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="node" id="n5">
+        <div class="badge">5</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="sifting.png" alt="Sifting flour">
+          </div>
+        </div>
+        <div class="label">Sifting</div>
+        <div class="panel" role="region" aria-label="Stage 5 details">
+          <p class="k">Vocabulary</p>
+          <p>sift, screen, filter, coarse particles, residue</p>
+          <p class="k">Model sentence</p>
+          <p class="model">The flour is subsequently sifted to eliminate larger particles and ensure smoothness.</p>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="node" id="n6">
+        <div class="badge">6</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="packaging.png" alt="Packaging flour">
+          </div>
+        </div>
+        <div class="label">Packaging</div>
+        <div class="panel" role="region" aria-label="Stage 6 details">
+          <p class="k">Vocabulary</p>
+          <p>package, seal, label, container, batch</p>
+          <p class="k">Model sentence</p>
+          <p class="model">Once refined, the flour is packaged into sealed containers ready for distribution.</p>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="node" id="n7">
+        <div class="badge">7</div>
+        <div class="circle" role="button" tabindex="0" aria-expanded="false">
+          <div class="icon">
+            <img src="distribution.png" alt="Distribution of flour">
+          </div>
+        </div>
+        <div class="label">Distribution</div>
+        <div class="panel" role="region" aria-label="Stage 7 details">
+          <p class="k">Vocabulary</p>
+          <p>distribute, deliver, retail outlets, supply chain, logistics</p>
+          <p class="k">Model sentence</p>
+          <p class="model">Finally, the finished product is distributed to shops and restaurants for consumer use.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const nodes = Array.from(document.querySelectorAll(".node"));
+
+  function closeAll(except){
+    nodes.forEach(n => {
+      if (n !== except) n.classList.remove("open");
+      const btn = n.querySelector(".circle");
+      if (btn) btn.setAttribute("aria-expanded", n.classList.contains("open") ? "true" : "false");
+    });
+  }
+
+  nodes.forEach(node => {
+    const btn = node.querySelector(".circle");
+    const toggle = () => {
+      const willOpen = !node.classList.contains("open");
+      closeAll(willOpen ? node : null);
+      node.classList.toggle("open", willOpen);
+      btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    };
+
+    btn.addEventListener("click", toggle);
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".node")) closeAll(null);
+  });
+})();
+</script>
+
+</body>
+</html>
